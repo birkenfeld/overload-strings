@@ -2,8 +2,6 @@
 #![plugin(overload_strings)]
 #![allow(dead_code)]
 
-static DONT_WORK: &'static str = "foo";
-
 pub mod fns {
     use std::borrow::Cow;
 
@@ -27,6 +25,10 @@ pub mod fns {
 #[overload_strings]
 mod foo {
     use fns::*;
+
+    static DONT_TOUCH: &'static str = "foo";
+    const DONT_TOUCH_EITHER: &'static str = "foo";
+
     #[overload_strings] // the duplicate is ignored
     pub fn print_it() {
         takes_str("Hello");
@@ -41,6 +43,7 @@ mod foo {
 mod bar {
     mod sub {
         use fns::*;
+
         fn bar() {
             // this works because we don't recurse overloading into submodules
             takes_into_string("...");

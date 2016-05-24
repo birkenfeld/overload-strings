@@ -24,16 +24,21 @@ impl<'a, 'cx> Folder for StrFolder<'a, 'cx> {
                 _ => false
             }
         }) { return i; }
-        // don't automatically recurse into submodules
-        if let ItemKind::Mod(_) = i.node {
-            if let Some(top_span) = self.1 {
-                if i.span == top_span {
-                    return fold::noop_fold_item_simple(i, self);
-                }
+        // ignore statics/consts, don't automatically recurse into submodules
+        match i.node {
+            ItemKind::Static(..) | ItemKind::Const(..) => {
+                i
             }
-            return i;
+            ItemKind::Mod(_) => {
+                if let Some(top_span) = self.1 {
+                    if i.span == top_span {
+                        return fold::noop_fold_item_simple(i, self);
+                    }
+                }
+                i
+            }
+            _ => fold::noop_fold_item_simple(i, self)
         }
-        fold::noop_fold_item_simple(i, self)
     }
 
     fn fold_expr(&mut self, e: P<Expr>) -> P<Expr> {
