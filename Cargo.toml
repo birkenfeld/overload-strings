@@ -1,0 +1,9 @@
+[package]
+name = "overload-strings"
+version = "0.1.0"
+authors = ["Georg Brandl <georg@python.org>"]
+
+[lib]
+crate_type = ["dylib"]
+
+[dependencies]
